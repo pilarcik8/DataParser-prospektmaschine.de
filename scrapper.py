@@ -1,22 +1,20 @@
 import requests
 from bs4 import BeautifulSoup
 
-URL = "https://www.prospektmaschine.de/hypermarkte/"
 
-def get_container():
-    page = requests.get(URL)
-    page.raise_for_status()
+class Scrapper:
+    def __init__(self, url, container_selector):
+        self.url = url
+        self.container_selector = container_selector
 
-    soup = BeautifulSoup(page.content, "html.parser")
-    container = soup.select_one("div.row.row-flex")
+    def get_container(self):
+        page = requests.get(self.url)
+        page.raise_for_status()
 
-    if not container:
-        raise ValueError("Container sa nenašiel")
+        soup = BeautifulSoup(page.content, "html.parser")
+        container = soup.select_one(self.container_selector)
 
-    return container
+        if not container:
+            raise ValueError("Container sa nenašiel")
 
-# docasne
-if __name__ == "__main__":
-    # len na rýchly debug
-    c = get_container()
-    print(c.prettify())
+        return container
