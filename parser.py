@@ -1,15 +1,15 @@
 from datetime import datetime
-from email.mime import text
 
 class Parser:
     BASE_URL = "https://www.prospektmaschine.de"
 
-    # Parser rozbije container na karty s udajmi
+    # Parser rozbije container na karty v ktorych najdeme udaje
     def parse_container_to_cards(self, container):
         return container.select(
             "div.brochure-thumb.col-xs-6.col-sm-3"
         )
 
+    # link z ktoreho vieme zistit obchod
     def parse_detail_url(self, card):
         a = card.find("a", href=True)
         if not a:
@@ -17,11 +17,8 @@ class Parser:
 
         href = a.get("href")
 
-        # len relatívna
+        # len relatívna ceasta
         return self.BASE_URL.rstrip("/") + "/" + href.lstrip("/")
-    
-    def parse_id(self, card):
-        return card.get("data-brochure-id")
 
     def parse_title(self, card):
         strong = card.find("strong")
@@ -45,6 +42,7 @@ class Parser:
 
         return None
     
+    # z karty vytiahne platnost v USA formáte MM/DD/YYYY
     def parse_valid_dates_usa(self, card):
         small = card.find("small", class_="hidden-sm")
         if not small:
@@ -55,6 +53,7 @@ class Parser:
 
         return self.eu_to_usa_date_format(start_str), self.eu_to_usa_date_format(end_str)
     
+    # z URL vytiahne názov obchodu
     def parse_shop_name_from_url(self, detail_url: str):
         if not detail_url:
             return None
